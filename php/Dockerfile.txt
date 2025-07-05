@@ -1,0 +1,5 @@
+# Usa uma imagem oficial do PHP com o servidor Apache
+FROM php:7.4-apache
+
+# Instala a extensão mysqli, necessária para o seu arquivo 'conexao.php'
+RUN docker-php-ext-install mysqli

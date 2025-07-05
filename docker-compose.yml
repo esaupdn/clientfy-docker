@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Serviço da aplicação PHP
+  app:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: clientfy-app
+    ports:
+      # Disponibiliza a aplicação no seu navegador em http://localhost:8080 [cite: 19]
+      - "8080:80"
+    volumes:
+      # Mapeia os arquivos do seu projeto para dentro do contêiner
+      - ./:/var/www/html
+    depends_on:
+      # Garante que o banco de dados inicie antes da aplicação [cite: 34]
+      - db
+    restart: always
+
+  # Serviço do Banco de Dados MySQL
+  db:
+    image: mysql:5.7
+    # O nome do contêiner deve ser 'db', conforme o requisito [cite: 12]
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      # Configura o banco usando variáveis de ambiente [cite: 14]
+      MYSQL_DATABASE: clientfy_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      # Monta o seu script .sql para popular o banco automaticamente [cite: 16, 57]
+      - ./clientfy.sql:/docker-entrypoint-initdb.d/init.sql
+      # Cria um volume para que os dados do banco não se percam
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
